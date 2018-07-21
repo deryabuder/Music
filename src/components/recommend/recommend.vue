@@ -1,7 +1,15 @@
 <template>
   <div class='recommend'>
     <div class='recommend-content'>
-      <div class='slider-wrapper'>
+      <div class="wrapper">
+        <swiper :options="swiperOption" v-if='showSwip'>
+          <swiper-slide v-for="item of recommends" :key='item.id'>
+            <a :href = 'item.linkUrl'>
+              <img class="swiper-img" :src="item.picUrl"/>
+            </a>
+          </swiper-slide>
+          <div class="swiper-pagination"  slot="pagination"></div>
+        </swiper>
       </div>
       <div class='recommend-list'>
         <h1 class='list-title'>热门歌单推荐</h1>
@@ -18,6 +26,20 @@ import { ERR_OK } from 'api/config'
 
 export default {
   name: 'Recommend',
+  data () {
+    return {
+      recommends: [],
+      swiperOption: {
+        pagination: '.swiper-pagination',
+        loop: true,
+        autoplay: true,
+        paginationType: 'bullets',
+        // 当Swiper的父元素或Swiper变化时，Swiper更新。解决轮播图宽度计算错误的问题
+        observer: true,
+        observeParents: true
+      }
+    }
+  },
   created () {
     this._getRecommend()
   },
@@ -25,9 +47,14 @@ export default {
     _getRecommend () {
       getRecommend().then((res) => {
         if (res.code === ERR_OK) {
-          console.log(res.data.slider)
+          this.recommends = res.data.slider
         }
       })
+    }
+  },
+  computed: {
+    showSwip () {
+      return this.recommends.length
     }
   }
 }
@@ -46,10 +73,17 @@ export default {
     height: 100%;
     overflow: hidden;
 
-    .slider-wrapper {
-      position: relative;
+    .wrapper {
+      // position: relative;
       width: 100%;
       overflow: hidden;
+      height: 0;
+      // 高度相对于宽度自动撑开40%, 解决图片未加载时，文字上移的情况
+      padding-bottom: 40%;
+
+      .swiper-img {
+        width: 100%;
+      }
     }
 
     .recommend-list {
