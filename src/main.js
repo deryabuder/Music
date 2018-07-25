@@ -6,11 +6,16 @@ import App from './App'
 import router from './router'
 import fastclick from 'fastclick'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
+import VueLazyload from 'vue-lazyload'
 import 'swiper/dist/css/swiper.css'
 import 'common/stylus/index.styl'
 
 fastclick.attach(document.body)
 Vue.use(VueAwesomeSwiper)
+Vue.use(VueLazyload, {
+  loading: require('common/image/default1.png'),
+  loading2: require('common/image/default2.png')
+})
 
 Vue.config.productionTip = false
 
