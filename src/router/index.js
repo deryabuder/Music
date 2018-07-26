@@ -21,6 +21,7 @@ export default new Router({
     path: '/singer',
     component: Singer,
     children: [{
+      // :id表示以id为变量
       path: ':id',
       component: SingerDetail
     }]

@@ -32,6 +32,7 @@ export function getData (el, name, val) {
 // 创建div元素，并给元素添加style属性
 let elementStyle = document.createElement('div').style
 
+// 等于立即执行函数
 let vendor = (() => {
   let transformNames = {
     webkit: 'webkitTransform',
@@ -41,6 +42,7 @@ let vendor = (() => {
     standard: 'transform'
   }
   // 判断是哪种浏览器内核
+  // let in 对象得到的是key 数组得到的是item
   for (let key in transformNames) {
     // 判断elementStyle是否有 transformNames[key]属性
     if (elementStyle[transformNames[key]] !== undefined) {

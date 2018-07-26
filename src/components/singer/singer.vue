@@ -1,5 +1,6 @@
 <template>
   <div class='singer' ref='singer'>
+    <!-- 从子组件接收的select事件 -->
     <list-view @select="selectSinger" :data='singers'></list-view>
     <!-- router-view 当做是一个容器，它渲染的组件是你使用 vue-router 指定的 -->
     <router-view></router-view>
@@ -12,6 +13,7 @@ import { getSingerList } from 'api/singer'
 import { ERR_OK } from 'api/config'
 import Singer from 'common/js/singer'
 import ListView from 'base/listview/listview'
+import { mapMutations } from 'vuex'
 const HOT_NAME = '热门'
 // 将热门歌手数据限制在10条
 const HOT_SINGER_LEN = 10
@@ -26,9 +28,12 @@ export default {
   },
   methods: {
     selectSinger (singer) {
+      // 进行路由跳转，相当于 <router-link :to="..."> 一个是声明式，一个是编程式
       this.$router.push({
         path: `/singer/${singer.id}`
       })
+      // 执行了mutations中的函数
+      this.setSinger(singer)
     },
     _getSingerList () {
       getSingerList().then((res) => {
@@ -86,7 +91,11 @@ export default {
       })
       // 得到一个顺序排序的一维数组，数组中每个元素都是对象
       return hot.concat(ret)
-    }
+    },
+    // 为写数据提供语法糖，调用
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
   },
   components: {
     ListView
