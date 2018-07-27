@@ -48,6 +48,32 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e)
         })
       })
+      app.get('/api/lyric', function (req, res) {
+        var url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query //取得req的参数
+        }).then((response) => {
+          var ret = response.data
+          if (typeof ret === 'string') {
+            // 取得Jsoncallback({})中的字符串
+            var reg = /^\w+\(({[^()]+})\)$/
+            var matches = ret.match(reg)
+            if (matches) {
+              // 得到第一个捕获组
+              ret = JSON.parse(matches[1])
+            }
+          }
+          // Send JSON response 到客户端
+          res.json(ret)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {

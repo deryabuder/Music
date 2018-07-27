@@ -1,13 +1,12 @@
 import * as types from './mutation-types'
 
-// 通常 mutation 都有 mutation-type做关联
+// mutation本质上是函数，函数名是mutation-type里定义的字符串常量
 // 在某一个动作会触发多个mutation时，用action对mutation进行封装
 // 设置 state 中的数据
 const matutaions = {
   [types.SET_SINGER] (state, singer) {
     state.singer = singer
   },
-  // 布尔值用flag
   [types.SET_PLAYING_STATE] (state, flag) {
     state.playing = flag
   },
@@ -27,5 +26,4 @@ const matutaions = {
     state.currentIndex = index
   }
 }
-
 export default matutaions
