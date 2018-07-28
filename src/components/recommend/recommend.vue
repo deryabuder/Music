@@ -44,8 +44,10 @@ import Loading from 'base/loading/loading'
 import Scroll from 'base/scroll/scroll'
 import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
+import { playlistMixin } from 'common/js/mixin'
 
 export default {
+  mixins: [playlistMixin],
   data () {
     return {
       recommends: [],
@@ -65,6 +67,11 @@ export default {
   },
 
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
+    },
     // 获取轮播图
     _getRecommend () {
       getRecommend().then((res) => {

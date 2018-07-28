@@ -1,7 +1,7 @@
 <template>
   <div class='singer' ref='singer'>
     <!-- 从子组件接收的select事件 -->
-    <list-view @select="selectSinger" :data='singers'></list-view>
+    <list-view @select="selectSinger" :data='singers' ref='list'></list-view>
     <!-- router-view 当做是一个容器，它渲染的组件是你使用 vue-router 指定的 -->
     <router-view></router-view>
   </div>
@@ -14,10 +14,13 @@ import { ERR_OK } from 'api/config'
 import Singer from 'common/js/singer'
 import ListView from 'base/listview/listview'
 import { mapMutations } from 'vuex'
+import { playlistMixin } from 'common/js/mixin'
+
 const HOT_NAME = '热门'
 // 将热门歌手数据限制在10条
 const HOT_SINGER_LEN = 10
 export default {
+  mixins: [playlistMixin],
   data () {
     return {
       singers: []
@@ -27,6 +30,11 @@ export default {
     this._getSingerList()
   },
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.singer.style.bottom = bottom
+      this.$refs.list.refresh()
+    },
     selectSinger (singer) {
       // 进行路由跳转，相当于 <router-link :to="..."> 一个是声明式，一个是编程式
       this.$router.push({

@@ -98,6 +98,9 @@ export default {
       let anchorIndex = parseInt(this.touch.anchorIndex) + delta
       this._scrollTo(anchorIndex)
     },
+    refresh () {
+      this.$refs.listview.refresh()
+    },
     scroll (pos) {
       // 实时获取better-scroll滚动的y轴的距离
       this.scrollY = pos.y

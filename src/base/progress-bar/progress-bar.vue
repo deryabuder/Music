@@ -1,16 +1,15 @@
 <template>
-  <div class="progress-bar" ref="progressBar" @click='progressClick'>
+  <div class="progress-bar" ref="progressBar" @click="progressClick">
     <div class="bar-inner">
       <!-- 播放进度 -->
       <div class="progress" ref="progress"></div>
       <!-- 当前的位置 -->
        <!-- 阻止浏览器的默认行为 -->
-      <div class="progress-btn-wrapper"
-           ref="progressBtn"
-           @touchstart.prevent='progressTouchStart'
-           @touchmove='progressTouchMove'
-           @touchend='progressTouchEnd'
-           >
+      <div class="progress-btn-wrapper" ref="progressBtn"
+           @touchstart.prevent="progressTouchStart"
+           @touchmove.prevent="progressTouchMove"
+           @touchend="progressTouchEnd"
+      >
         <div class="progress-btn"></div>
       </div>
     </div>
@@ -20,7 +19,7 @@
 <script type="text/ecmascript-6">
 import { prefixStyle } from 'common/js/dom'
 
-const progressBtn = 16
+const progressBtnWidth = 16
 const transform = prefixStyle('transform')
 
 export default {
@@ -47,7 +46,7 @@ export default {
       }
       // 手指移动的偏移量
       const deltaX = e.touches[0].pageX - this.touch.startX
-      const offsetWidth = Math.min(this.$refs.progressBar.clientWidth - progressBtn, Math.max(0, this.touch.left + deltaX))
+      const offsetWidth = Math.min(this.$refs.progressBar.clientWidth - progressBtnWidth, Math.max(0, this.touch.left + deltaX))
       // 计算手指移动后的总的偏移量
       this._offset(offsetWidth)
     },
@@ -69,7 +68,7 @@ export default {
     },
     _triggrPercent () {
       // 计算拖动之后 percent发送给父组件player
-      const barWidth = this.$refs.progressBar.clientWidth - progressBtn
+      const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
       const percent = this.$refs.progress.clientWidth / barWidth
       // 基础组件，只派发事件，不管逻辑
       this.$emit('percentChange', percent)
@@ -77,7 +76,7 @@ export default {
     // 改变滚动条的进度和按钮的位置
     _offset (offsetWidth) {
       this.$refs.progress.style.width = `${offsetWidth}px`
-      this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`
     }
   },
   watch: {
@@ -86,10 +85,9 @@ export default {
       // 在没有拖动进度条时，进度条才会计算播放的位置
       if (newPercent >= 0 && !this.touch.initiated) {
         // 减去的是Bth初始占用的宽度
-        const barWidth = this.$refs.progressBar.clientWidth - progressBtn
+        const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
         const offsetWidth = newPercent * barWidth
-        this.$refs.progress.style.width = `${offsetWidth}px`
-        this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+        this._offset(offsetWidth)
       }
     }
   }
