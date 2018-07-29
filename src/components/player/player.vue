@@ -490,13 +490,13 @@ export default {
         this.$refs.audio.play()
         this.getLyric()
       }, 1000)
+    },
+    playing (newPlaying) {
+      const audio = this.$refs.audio
+      this.$nextTick(() => {
+        newPlaying ? audio.play() : audio.pause()
+      })
     }
-  },
-  playing (newPlaying) {
-    const audio = this.$refs.audio
-    this.$nextTick(() => {
-      newPlaying ? audio.play() : audio.pause()
-    })
   },
   components: {
     ProgressBar,

@@ -35,6 +35,7 @@
           <loading></loading>
       </div>
     </scroll>
+    <!-- router-view 当做是一个容器，它渲染的组件是你使用 vue-router 指定的 -->
     <router-view></router-view>
   </div>
 </template>
@@ -45,6 +46,7 @@ import Scroll from 'base/scroll/scroll'
 import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
 import { playlistMixin } from 'common/js/mixin'
+import { mapMutations } from 'vuex'
 
 export default {
   mixins: [playlistMixin],
@@ -72,6 +74,13 @@ export default {
       this.$refs.recommend.style.bottom = bottom
       this.$refs.scroll.refresh()
     },
+    selectItem (item) {
+      this.$router.push({
+        path: `/recommend/${item.dissid}`
+      })
+      // 将数据写入state中的disc
+      this.setDisc(item)
+    },
     // 获取轮播图
     _getRecommend () {
       getRecommend().then((res) => {
@@ -95,7 +104,11 @@ export default {
         this.$refs.scroll.refresh()
         this.checkLoaded = true
       }
-    }
+    },
+    // 扩展运算符
+    ...mapMutations({
+      setDisc: 'SET_DISC'
+    })
   },
   computed: {
     // 轮播图显示的条件
