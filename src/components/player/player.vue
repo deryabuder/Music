@@ -106,6 +106,7 @@
         </div>
       </div>
     </transition>
+    <play-list ref='playlist'></play-list>
     <!-- 播放器 -->
     <audio ref="audio" :src="currentSong.url" @play="ready" @error="error" @timeupdate="updateTime"
            @ended="end"></audio>
@@ -114,7 +115,7 @@
 
 <script type="text/ecmascript-6">
 // 从vuex取数据到组件中
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
 import ProgressBar from 'base/progress-bar/progress-bar'
@@ -123,6 +124,7 @@ import { playMode } from 'common/js/config'
 import { shuffle } from 'common/js/util'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
+import PlayList from 'components/playlist/playlist'
 
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
@@ -295,6 +297,7 @@ export default {
     },
     ready () {
       this.songReady = true
+      this.savePlayHistory(this.currentSong)
     },
     error () {
       // 歌曲加载失败时
@@ -375,6 +378,9 @@ export default {
       }
       // 在cd页面展示当前播放的歌词
       this.playingLyric = txt
+    },
+    showPlaylist () {
+      this.$refs.playlist.show()
     },
     middleTouchStart (e) {
       this.touch.initiated = true
@@ -472,7 +478,10 @@ export default {
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayMode: 'SET_PLAY_MODE',
       setPlayList: 'SET_PLAYLIST'
-    })
+    }),
+    ...mapActions([
+      'savePlayHistory'
+    ])
   },
   watch: {
     currentSong (newSong, oldSong) {
@@ -501,7 +510,8 @@ export default {
   components: {
     ProgressBar,
     ProgressCircle,
-    Scroll
+    Scroll,
+    PlayList
   }
 }
 </script>

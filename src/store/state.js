@@ -2,6 +2,10 @@ import {
   playMode
 } from 'common/js/config'
 
+import {
+  loadSearch,
+  loadPlay
+} from 'common/js/cache'
 // 原始数据
 const state = {
   singer: {},
@@ -16,6 +20,8 @@ const state = {
   // 当前播放索引
   currentIndex: -1,
   disc: {},
-  topList: {}
+  topList: {},
+  searchHistory: loadSearch(),
+  playHistory: loadPlay()
 }
 export default state

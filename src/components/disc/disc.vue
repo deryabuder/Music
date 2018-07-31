@@ -42,7 +42,6 @@ export default {
       }
       // jsonp请求返回的是一个promise
       getSongList(this.disc.dissid).then((res) => {
-        console.log(res.code)
         if (res.code === ERR_OK) {
           this.songs = this._normalizeSongs(res.cdlist[0].songlist)
         }

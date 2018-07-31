@@ -67,6 +67,7 @@ export function getSongList (disstid) {
     platform: 'yqq',
     hostUin: 0,
     needNewCode: 0,
+    // 一定要加这个，不然返回的是回调函数
     format: 'json'
   })
   return axios.get(url, {
