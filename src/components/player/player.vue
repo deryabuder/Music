@@ -80,6 +80,9 @@
             <div class="icon i-right" :class="disableCls">
               <i @click="next" class="icon-next"></i>
             </div>
+            <div class="icon i-right">
+              <i class='icon' @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -108,6 +111,7 @@
     </transition>
     <play-list ref='playlist'></play-list>
     <!-- 播放器 -->
+    <!-- oncanplay加载就绪就触发 onplay开始播放时触发 -->
     <audio ref="audio" :src="currentSong.url" @play="ready" @error="error" @timeupdate="updateTime"
            @ended="end"></audio>
   </div>
@@ -125,10 +129,12 @@ import { shuffle } from 'common/js/util'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
 import PlayList from 'components/playlist/playlist'
+import { playerMixin } from 'common/js/mixin'
 
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
 export default {
+  mixins: [playerMixin],
   data () {
     return {
       // 标志位，保证了不会发生快速点击时dom没有成功渲染的问题
@@ -173,7 +179,8 @@ export default {
       'currentIndex',
       'mode',
       // 根据 sequenceList和播放模式得到playlist
-      'sequenceList'
+      'sequenceList',
+      'favoriteList'
     ])
   },
   created () {
@@ -480,7 +487,9 @@ export default {
       setPlayList: 'SET_PLAYLIST'
     }),
     ...mapActions([
-      'savePlayHistory'
+      'savePlayHistory',
+      'saveFavoriteList',
+      'deleteFavoriteList'
     ])
   },
   watch: {
@@ -491,13 +500,18 @@ export default {
       }
       if (this.currentLyric) {
         this.currentLyric.stop()
+        this.currentTime = 0
+        this.playingLyric = ''
+        this.currentLineNum = 0
       }
       // 添加一个延迟，dom加载后再请求歌曲的url
       // 将回调延迟到下次 DOM 更新循环之后执行。在修改数据之后立即使用它，然后等待 DOM 更新。
       // 手机从后台切到前台，就可以继续播放
-      setTimeout(() => {
-        this.$refs.audio.play()
-        this.getLyric()
+      // 无论currentSong变化多少次，播放和获取歌词只执行最后一次
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.$refs.audio.play() // 同步
+        this.getLyric() // 异步
       }, 1000)
     },
     playing (newPlaying) {

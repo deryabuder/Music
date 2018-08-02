@@ -2,6 +2,7 @@
 <template>
   <transition name="list-fade">
     <div class="playlist" @click="hide" v-show="showFlag">
+      <!-- 阻止事件冒泡， 因此上面的点击事件在内部不起作用 -->
       <div class="list-wrapper" @click.stop>
         <!-- 头部操作 -->
         <div class="list-header">
@@ -18,8 +19,8 @@
                 @click="selectItem(item,index)">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
-              <span class="like">
-                <i></i>
+              <span @click.stop ="toggleFavorite(item)" class="like">
+                <i :class="getFavoriteIcon(item)"></i>
               </span>
               <span @click.stop="deleteOne(item)" class="delete">
                 <i class="icon-delete"></i>
@@ -61,7 +62,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sequenceList', 'currentSong', 'mode', 'playlist']),
+    ...mapGetters(['sequenceList', 'currentSong', 'mode', 'playlist', 'favoriteList']),
     modeText () {
       return this.mode === playMode.sequence ? '顺序播放' : this.mode === playMode.random ? '随机播放' : '单曲循环'
     },
@@ -133,7 +134,9 @@ export default {
     }),
     ...mapActions([
       'deleteSong',
-      'deleteSongList'
+      'deleteSongList',
+      'saveFavoriteList',
+      'deleteFavoriteList'
     ])
   },
   watch: {

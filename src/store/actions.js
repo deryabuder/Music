@@ -13,7 +13,9 @@ import {
   saveSearch,
   clearSearch,
   deleteSearch,
-  savePlay
+  savePlay,
+  saveFavorite,
+  deleteFavorite
 } from 'common/js/cache'
 
 function findIndex (list, song) {
@@ -97,29 +99,24 @@ export const insertSong = function ({
   let currentSong = playlist[currentIndex]
   // 查找当前列表中是否有待插入的歌曲并返回其索引
   let fpIndex = findIndex(playlist, song)
-  // 因为是插入歌曲，索引+1
+  // 因为是插入歌曲，所以索引+1
   currentIndex++
   // 插入这首歌到当前索引位置
   playlist.splice(currentIndex, 0, song)
-  // 如果待添加的歌曲已在播放列表中，删除原有歌曲
+  // 如果已经包含了这首歌
   if (fpIndex > -1) {
+    // 如果当前插入的序号大于列表中的序号
     if (currentIndex > fpIndex) {
-      // 插入在原有歌曲之后
       playlist.splice(fpIndex, 1)
       currentIndex--
     } else {
-      // 如果插入在原有歌曲前，原有歌曲的索引+1
       playlist.splice(fpIndex + 1, 1)
     }
   }
-  // 插入到 sequenceList 中的位置
-  let currentSIndex = findIndex(sequenceList, currentSong) + 1
-  // 查询待添加的歌曲是否已在 sequenceList 列表中
-  let fsIndex = findIndex(sequenceList, song)
 
-  // 插入到当前索引
+  let currentSIndex = findIndex(sequenceList, currentSong) + 1
+  let fsIndex = findIndex(sequenceList, song)
   sequenceList.splice(currentSIndex, 0, song)
-  // 如果待添加的歌曲已在播放列表中，删除原有歌曲
   if (fsIndex > -1) {
     if (currentSIndex > fsIndex) {
       sequenceList.splice(fsIndex, 1)
@@ -156,6 +153,7 @@ export const deleteSong = function ({
   if (currentIndex > pIndex || currentIndex === playlist.length) {
     currentIndex--
   }
+
   commit(types.SET_PLAYLIST, playlist)
   commit(types.SET_SEQUENCE_LIST, sequenceList)
   commit(types.SET_CURRENT_INDEX, currentIndex)
@@ -183,4 +181,16 @@ export const savePlayHistory = function ({
   commit
 }, song) {
   commit(types.SET_PLAY_HISTORY, savePlay(song))
+}
+
+export const saveFavoriteList = function ({
+  commit
+}, song) {
+  commit(types.SET_FAVORITE_LIST, saveFavorite(song))
+}
+
+export const deleteFavoriteList = function ({
+  commit
+}, song) {
+  commit(types.SET_FAVORITE_LIST, deleteFavorite(song))
 }

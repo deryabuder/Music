@@ -11,6 +11,11 @@ import VueLazyload from 'vue-lazyload'
 import 'swiper/dist/css/swiper.css'
 import 'common/stylus/index.styl'
 
+// 移动端调试工具，在移动端输出日志
+/* eslint-disable no-unused-vars */
+// import vConsole from 'vconsole'
+// console.log('Hello world')
+
 fastclick.attach(document.body)
 Vue.use(VueAwesomeSwiper)
 Vue.use(VueLazyload, {
