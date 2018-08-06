@@ -9,6 +9,8 @@ const Recommend = (resolve) => {
     resolve(module)
   })
 }
+// import('components/rank/rank') 返回 promise
+// 将异步组件定义为返回一个 Promise 的工厂函数
 const Rank = (resolve) => {
   import('components/rank/rank').then((module) => {
     resolve(module)
@@ -47,7 +49,10 @@ const UserCenter = (resolve) => {
 
 Vue.use(Router)
 
+// 参数为一个对象，对象里有个名为routers的数组
+// 创建 router 实例，然后传 `routes` 配置
 export default new Router({
+  // 定义路由，每个路由应该映射一个组件
   routes: [{
     // 重定向
     path: '/',
@@ -56,6 +61,7 @@ export default new Router({
   {
     path: '/recommend',
     component: Recommend,
+    // 二级路由
     children: [{
       path: ':id',
       component: Disc

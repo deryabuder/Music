@@ -2,6 +2,7 @@
   <div class="song-list">
     <ul>
       <li class="item" v-for="(song, index) in songs" :key='song.id' @click='selectItem(song, index)'>
+        <!-- 是否显示排行信息 -->
         <div class='rank' v-show='rank'>
           <span :class='getRankCls(index)'>{{getRankText(index)}}</span>
         </div>
@@ -16,6 +17,7 @@
 
 <script type='text/ecmascript-6'>
 export default {
+  // 从父组件musiclist中获取
   props: {
     songs: {
       type: Array,
@@ -55,17 +57,20 @@ export default {
 @import '~common/stylus/variable';
 @import '~common/stylus/mixin';
 
+// 父组件给了包裹着片区域的padding值
 .song-list {
+  // 每一行都是左右弹性布局
   .item {
     display: flex;
     align-items: center;
     box-sizing: border-box;
     height: 64px;
-    font-size: $font-size-medium;
+    font-size: $font-size-medium;  // 歌曲介绍信息是14px
 
     .rank {
-      flex: 0 0 25px;
+      flex: 0 0 25px; // 扩展的量 收缩的量 项目长度
       width: 25px;
+      // 不需要背景色
       margin-right: 30px;
       text-align: center;
 
@@ -89,8 +94,8 @@ export default {
       }
 
       .text {
-        color: $color-theme;
-        font-size: $font-size-large;
+        color: $color-theme; // 黄色
+        font-size: $font-size-large; // 18px
       }
     }
 

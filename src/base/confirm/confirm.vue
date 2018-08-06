@@ -23,13 +23,13 @@ export default {
       type: String,
       default: ''
     },
-    confirmBtnText: {
-      type: String,
-      default: '确定'
-    },
     cancelBtnText: {
       type: String,
       default: '取消'
+    },
+    confirmBtnText: {
+      type: String,
+      default: '确定'
     }
   },
   data () {
@@ -48,10 +48,10 @@ export default {
       this.showFlag = false
     },
     cancel () {
-      // 子组件派发事件， 不做任何操作
       this.hide()
     },
     confirm () {
+      // 子组件派发事件， 不做任何操作
       this.hide()
       this.$emit('confirm')
     }

@@ -46,6 +46,7 @@ export default {
       }
       // 手指移动的偏移量
       const deltaX = e.touches[0].pageX - this.touch.startX
+      // btn覆盖的部分不算播放进度
       const offsetWidth = Math.min(this.$refs.progressBar.clientWidth - progressBtnWidth, Math.max(0, this.touch.left + deltaX))
       // 计算手指移动后的总的偏移量
       this._offset(offsetWidth)
@@ -68,6 +69,7 @@ export default {
     },
     _triggrPercent () {
       // 计算拖动之后 percent发送给父组件player
+      // 进度条的总长度
       const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
       const percent = this.$refs.progress.clientWidth / barWidth
       // 基础组件，只派发事件，不管逻辑
@@ -75,7 +77,9 @@ export default {
     },
     // 改变滚动条的进度和按钮的位置
     _offset (offsetWidth) {
+      // 已播放的宽度变大（颜色改变）
       this.$refs.progress.style.width = `${offsetWidth}px`
+      // 按钮位置改变
       this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`
     }
   },
@@ -113,7 +117,7 @@ export default {
 
     .progress-btn-wrapper {
       position: absolute;
-      left: -8px;
+      left: -8px; // 考虑进度条4px的高度
       top: -13px;
       width: 30px;
       height: 30px;

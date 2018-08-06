@@ -52,12 +52,15 @@ export const randomPlay = function ({
 }, {
   list
 }) {
+  // 通过commit提交一个mutations，将数据写入state
   commit(types.SET_PLAY_MODE, playMode.random)
+  // 将传入的list作为顺序列表
   commit(types.SET_SEQUENCE_LIST, list)
   let randomList = shuffle(list)
   commit(types.SET_PLAYLIST, randomList)
   // 从randomlist的第一个元素播放
   commit(types.SET_CURRENT_INDEX, 0)
+  // commit(types.SET_PLAYING_STATE, true)
 }
 
 /**
@@ -105,7 +108,7 @@ export const insertSong = function ({
   playlist.splice(currentIndex, 0, song)
   // 如果已经包含了这首歌
   if (fpIndex > -1) {
-    // 如果当前插入的序号大于列表中的序号
+    // 如果当前插入的序号大于列表中的序号,则删除列表中那首歌
     if (currentIndex > fpIndex) {
       playlist.splice(fpIndex, 1)
       currentIndex--

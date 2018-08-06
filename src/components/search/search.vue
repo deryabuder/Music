@@ -1,6 +1,7 @@
 <template>
   <div class="search">
     <div class="search-box-wrapper">
+      <!-- 检索值由子组件searchbox传递给父组件 -->
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
     <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
@@ -30,6 +31,7 @@
     </div>
     <!-- 搜索结果 -->
     <div class="search-result" v-show="query" ref="searchResult">
+      <!-- @从子组件接收的事件，:传递给子组件的数据-->
       <suggest @listScroll="blurInput" @select="saveSearch" ref="suggest" :query="query" :showSinger='showSinger'></suggest>
     </div>
     <!-- 清空弹窗 -->
@@ -62,6 +64,7 @@ export default {
   },
   computed: {
     ...mapGetters(['searchHistory']),
+    // scroll绑定的data，是热门搜索数组和搜索历史拼接后的数组
     shortcut () {
       return this.hotKey.concat(this.searchHistory)
     }
@@ -80,21 +83,27 @@ export default {
       this.$refs.shortcutWrapper.style.bottom = bottom
       this.$refs.shortcut.refresh()
     },
+    // 子组件将监听到的query的变化发送给父组件，父组件将其保存在搜索历史中
     onQueryChange (query) {
       this.query = query
     },
+    // 点击删除按钮，会出现是否删除搜索历史的确认框
     showConfirm () {
       this.$refs.confirm.show()
     },
+    // 当向下滚动搜索结果时，让搜索框失去焦点
     blurInput () {
       this.$refs.searchBox.blur()
     },
+    // 当点击热门或搜索历史时，将其添加到搜索框
     addQuery (k) {
       this.$refs.searchBox.setQuery(k)
     },
+    // 逐项删除搜索历史
     deleteSearchHistory (item) {
       this.deleteSearchHistory(item)
     },
+    // 点击搜索结果保存在本地
     saveSearch () {
       this.saveSearchHistory(this.query)
     },
@@ -117,6 +126,7 @@ export default {
   },
   watch: {
     // 解决添加歌曲后不能滚动的问题
+    // 监听query的变化，从而监听shortcut的变化，从而对scroll滚动的数据进行刷新
     query (newQuery) {
       if (!newQuery) {
         setTimeout(() => {
@@ -141,6 +151,7 @@ export default {
 
 .search {
   .search-box-wrapper {
+    // 元素与元素之间
     margin: 20px;
   }
 

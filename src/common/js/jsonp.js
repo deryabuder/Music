@@ -14,7 +14,7 @@ export function param (data) {
 // data是object
 export default function jsonp (url, data, opts) {
   url += ((url.indexOf('?') === -1) ? '?' : '&') + param(data)
-
+  // 参数是执行器，执行器的参数是完成处理函数和拒绝处理函数
   return new Promise((resolve, reject) => {
     originalJSONP(url, opts, (err, data) => {
       if (!err) {

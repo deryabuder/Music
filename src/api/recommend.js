@@ -42,10 +42,12 @@ export function getDiscList () {
     rnd: Math.random(),
     format: 'json'
   })
-
+  // Axios 是一个基于 promise 的 HTTP 库，可以用在浏览器和 node.js 中。
+  // axios.get(url[, config])
   return axios.get(url, {
     params: data
   }).then((res) => {
+    // 返回一个已决的promise
     return Promise.resolve(res.data)
   })
 }
@@ -59,7 +61,7 @@ export function getSongList (disstid) {
   const url = '/api/getcdInfo'
 
   const data = Object.assign({}, commonParams, {
-    disstid,
+    disstid, // 请求头中需要有disstid
     type: 1,
     json: 1,
     utf8: 1,

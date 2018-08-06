@@ -15,6 +15,7 @@ export function shuffle (arr) {
   return _arr
 }
 
+// 函数去抖动
 export function debounce (func, delay) {
   let timer
   return function (...args) {

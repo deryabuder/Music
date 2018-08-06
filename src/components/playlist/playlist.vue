@@ -9,6 +9,7 @@
           <h1 class="title">
             <i class="icon" :class="iconMode" @click="changeMode"></i>
             <span class="text">{{modeText}}</span>
+            <!-- 清空播放列表的图标 -->
             <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
@@ -57,15 +58,18 @@ export default {
   mixins: [playerMixin],
   data () {
     return {
+      // 默认不展示播放列表
       showFlag: false,
       refreshDelay: 120
     }
   },
   computed: {
     ...mapGetters(['sequenceList', 'currentSong', 'mode', 'playlist', 'favoriteList']),
+    // 播放模式描述
     modeText () {
       return this.mode === playMode.sequence ? '顺序播放' : this.mode === playMode.random ? '随机播放' : '单曲循环'
     },
+    // 播放模式图标
     iconMode () {
       return this.mode === 0 ? 'icon-sequence' : this.mode === 1 ? 'icon-loop' : 'icon-random'
     }
@@ -100,7 +104,7 @@ export default {
       return ''
     },
     selectItem (item, index) {
-      // 点击元素后，从播放列表中获取当前歌曲的索引，并赋值给currentIndex
+      // 点击元素后，从播放列表中获取当前歌曲的索引，并赋值给currentIndex，并设置为播放状态
       if (this.mode === playMode.random) {
         index = this.playlist.findIndex((song) => {
           return song.id === item.id
@@ -110,6 +114,7 @@ export default {
       this.setPlayingState(true)
     },
     scrollToCurrent (current) {
+      // 在顺序列表中寻找当前播放歌曲索引，滚动到固定位置
       const index = this.sequenceList.findIndex((song) => {
         return current.id === song.id
       })
@@ -140,6 +145,7 @@ export default {
     ])
   },
   watch: {
+    // 当前播放歌曲发生变化时，将当前播放列表滚动到顶部
     currentSong (newSong, oldSong) {
       if (!this.showFlag || newSong.id === oldSong.id) {
         return
@@ -170,8 +176,9 @@ export default {
   background-color: $color-background-d;
 
   &.list-fade-enter-active, &.list-fade-leave-active {
+    // 父元素转换
     transition: opacity 0.3s;
-
+    // 子元素转换
     .list-wrapper {
       transition: all 0.3s;
     }

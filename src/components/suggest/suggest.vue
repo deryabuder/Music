@@ -1,4 +1,5 @@
 <template>
+  <!-- : 传递给子组件的数据，@子组件传递给父组件的事件和方法 -->
   <scroll ref="suggest"
           class="suggest"
           :data="result"
@@ -16,6 +17,7 @@
           <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
+      <!-- 传递给loading的title数据 -->
       <loading v-show="hasMore" title=""></loading>
     </ul>
     <div v-show="!hasMore && !result.length" class="no-result-wrapper">
@@ -55,6 +57,7 @@ export default {
       // 当前检索页数，用于下拉加载
       page: 1,
       pullup: true,
+      // 滚动前是否触发事件，如：滚动前让输入框失去焦点
       beforeScrollData: true,
       // 标志位。是否加载完
       hasMore: true,
@@ -67,6 +70,7 @@ export default {
     refresh () {
       this.$refs.suggest.refresh()
     },
+    // query发生变化时使用
     search () {
       this.page = 1
       this.hasMore = true
@@ -78,6 +82,7 @@ export default {
         }
       })
     },
+    // 当滚动到页面的末尾时触发的事件
     searchMore () {
       if (!this.hasMore) {
         return
@@ -85,12 +90,14 @@ export default {
       this.page++
       search(this.query, this.page, this.showSinger, perpage).then((res) => {
         if (res.code === ERR_OK) {
+          // 将初始化后的搜索结果数组写入result
           this.result = this.result.concat(this._genResult(res.data))
+          // 刷新this.hasMore
           this._checkMore(res.data)
         }
       })
     },
-    // 滚动前触发事件
+    // 滚动前触发事件，发送给父组件，让搜索框失去焦点
     listScroll () {
       this.$emit('listScroll')
     },
@@ -109,6 +116,7 @@ export default {
         // 添加歌手到歌手列表
         this.setSinger(singer)
       } else {
+        // 将歌曲插入顺序列表和播放列表中
         this.insertSong(item)
       }
       this.$emit('select', item)
@@ -136,6 +144,7 @@ export default {
         // 解构赋值
         ret.push({ ...data.zhida, ...{ type: TYPE_SINGER } })
       }
+      // ret由歌手信息和歌曲信息组成的数组，每一个元素都是对象
       if (data.song) {
         ret = ret.concat(this._normalizeSongs(data.song.list))
       }

@@ -31,6 +31,7 @@ export default {
     }
   },
   computed: {
+    // 未播放的进度
     dashOffset () {
       return (1 - this.percent) * this.dashArray
     }
@@ -52,12 +53,13 @@ export default {
 
     &.progress-background {
       transform: scale(0.9);
-      stroke: $color-theme-d;
+      stroke: $color-theme-d; //轮廓颜色 深黄
     }
 
     &.progress-bar {
+      // 不旋转的话，初始进度在左侧
       transform: scale(0.9) rotate(-90deg);
-      stroke: $color-theme;
+      stroke: $color-theme; // 黄色
     }
   }
 }

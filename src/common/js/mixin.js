@@ -19,6 +19,7 @@ export const playlistMixin = {
   mounted () {
     this.handlePlaylist(this.playlist)
   },
+  // keep-alive 组件激活时调用
   activated () {
     this.handlePlaylist(this.playlist)
   },
@@ -47,15 +48,18 @@ export const searchMixin = {
     ])
   },
   methods: {
+    // 子组件将监听到的query的变化发送给父组件，父组件将其保存在搜索历史中
     onQueryChange (query) {
       this.query = query
     },
     blurInput () {
       this.$refs.searchBox.blur()
     },
+    // 当点击热门或搜索历史时，将其添加到搜索框
     addQuery (query) {
       this.$refs.searchBox.setQuery(query)
     },
+    // 保存搜索历史到state中的searchHistory
     saveSearch () {
       this.saveSearchHistory(this.query)
     },

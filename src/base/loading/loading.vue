@@ -6,6 +6,7 @@
 </template>
 <script type="text/ecmascript-6">
 export default {
+  // 从父组件中接收的数据
   props: {
     title: {
       type: String,
@@ -19,12 +20,13 @@ export default {
 
 .loading {
   width: 100%;
+  // 可以让图片居中
   text-align: center;
 
   .desc {
     line-height: 20px;
-    font-size: $font-size-small;
-    color: $color-text-l;
+    font-size: $font-size-small; // 12px
+    color: $color-text-l;  // 灰色
   }
 }
 </style>

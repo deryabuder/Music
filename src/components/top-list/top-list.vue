@@ -21,9 +21,9 @@ export default {
   created () {
     this._getMusicList()
   },
-  // 通过vuex从父组件接收数据
   computed: {
     title () {
+      // 通过mapGetter从vuex中获取
       return this.topList.topTitle
     },
     bgImage () {
@@ -44,6 +44,7 @@ export default {
       }
       getMusicList(this.topList.id).then((res) => {
         if (res.code === ERR_OK) {
+          // 得到了指定格式的歌曲
           this.songs = this._normalizeSongs(res.songlist)
         }
       })
@@ -72,6 +73,7 @@ export default {
 }
 
 .slide-enter, .slide-leave-to {
+  // 从右侧划出，然后回到右侧
   transform: translate3d(100%, 0, 0);
 }
 </style>

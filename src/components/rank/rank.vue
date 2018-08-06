@@ -18,7 +18,7 @@
         <loading></loading>
       </div>
     </scroll>
-     <!-- router-view 当做是一个容器，它渲染的组件是你使用 vue-router 指定的 -->
+     <!-- router-view 当做是存放二级路由的容器，它渲染的组件是你使用 vue-router 指定的 -->
     <router-view></router-view>
   </div>
 </template>
@@ -51,6 +51,7 @@ export default {
       this.$refs.toplist.refresh()
     },
     selectItem (item) {
+      // 跳转到二级路由，并传入id作为path
       this.$router.push({
         path: `/rank/${item.id}`
       })
@@ -81,21 +82,26 @@ export default {
 @import '~common/stylus/mixin';
 
 .rank {
+  // 父容器高度固定
   position: fixed;
   width: 100%;
   top: 88px;
   bottom: 0;
 
+  // 子容器溢出隐藏
   .toplist {
     height: 100%;
     overflow: hidden;
 
     .item {
+      // 左右弹性布局
       display: flex;
+      // 元素与元素之间
       margin: 0 20px;
       padding-top: 20px;
       height: 100px;
 
+      // &表示父元素
       &:last-child {
         padding-bottom: 20px;
       }
@@ -108,8 +114,10 @@ export default {
 
       .songlist {
         flex: 1;
+        // 上下弹性布局
         display: flex;
         flex-direction: column;
+        // 在垂直方向上居中
         justify-content: center;
         padding: 0 20px;
         height: 100px;

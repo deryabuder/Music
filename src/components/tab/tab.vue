@@ -26,23 +26,25 @@ export default {
 @import '~common/stylus/variable';
 
 .tab {
+  // 弹性布局，水平居中，
   display: flex;
   height: 44px;
   line-height: 44px;
-  font-size: $font-size-medium;
+  font-size: $font-size-medium; // 14px
 
   .tab-item {
     flex: 1;
     text-align: center;
 
     .tab-link {
-      padding-bottom: 5px;
-      color: $color-text-l;
+      padding-bottom: 5px; // border-box垂直居中
+      color: $color-text-l; // 浅灰色
     }
-
+    // &父级元素
+    // router-link 标签在选中的时候，会自动给整个标签添加一个 router-link-active的class
     &.router-link-active {
       .tab-link {
-        color: $color-theme;
+        color: $color-theme; // 黄色
         border-bottom: 2px solid $color-theme;
       }
     }

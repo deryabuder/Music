@@ -28,6 +28,7 @@ export default {
     clear () {
       this.query = ''
     },
+    // 给父亲用，通过父组件来设置query的值
     setQuery (query) {
       this.query = query
     },
@@ -37,7 +38,7 @@ export default {
     }
   },
   created () {
-    // 监听query的变化，并延时发送给父组件（节流）
+    // 监听query的变化，并延时发送事件给父组件（节流）
     this.$watch('query', debounce((newQuery) => {
       this.$emit('query', newQuery)
     }, 200))
@@ -51,9 +52,11 @@ export default {
 
 .search-box {
   display: flex;
+  // 垂直居中水平对齐弹性盒的各项
   align-items: center;
   box-sizing: border-box;
   width: 100%;
+  // 让元素与它包裹的内容有一定的距离
   padding: 0 6px;
   height: 40px;
   background: $color-highlight-background;
@@ -65,6 +68,7 @@ export default {
 
   .box {
     flex: 1;
+    // 元素与元素之间
     margin: 0 5px;
     line-height: 18px;
     background: $color-highlight-background;

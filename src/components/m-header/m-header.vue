@@ -1,7 +1,8 @@
 <template>
   <div class='m-header'>
-    <div class='icon'></div>
     <h1 class='text'>Music</h1>
+    <!-- <router-link> 组件支持用户在具有路由功能的应用中 (点击) 导航。
+      通过 to 属性指定目标地址，默认渲染成带有正确链接的 <a> 标签，可以通过配置 tag 属性生成别的标签。 -->
     <router-link tag='div' class='mine' to='/user'>
       <i class='icon-mine'></i>
     </router-link>
@@ -24,34 +25,22 @@ export default {
   height: 44px;
   text-align: center;
   color: $color-theme;
-  font-size: 0;
-
-  .icon {
-    display: inline-block;
-    vertical-align: top;
-    margin-top: 6px;
-    width: 30px;
-    height: 32px;
-    margin-right: 9px;
-    bg-image('logo');
-    background-size: 30px 32px;
-  }
 
   .text {
     display: inline-block;
-    vertical-align: top;
+    vertical-align: top; // 把元素的顶端与行中最高元素的顶端对齐
     line-height: 44px;
-    font-size: $font-size-large;
+    font-size: $font-size-large; // 18px
   }
 
   .mine {
     position: absolute;
     top: 0;
-    right: 0;
+    right: 0; //靠右显示
 
     .icon-mine {
       display: block;
-      padding: 12px;
+      padding: 12px; // 保证了垂直居中
       font-size: 20px;
       color: $color-theme;
     }

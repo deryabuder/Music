@@ -84,6 +84,7 @@ export default {
     handlePlaylist (playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.listWrapper.style.bottom = bottom
+      // 手动刷新scroll
       this.$refs.favoriteList && this.$refs.favoriteList.refresh()
       this.$refs.playList && this.$refs.playList.refresh()
     },
@@ -107,7 +108,7 @@ export default {
       })
     },
     selectSong (song) {
-      // 新增歌曲到播放列表
+      // 点击最近播放和我的收藏都可以新增歌曲到播放列表
       this.insertSong(new Song(song))
     },
     ...mapActions([
@@ -171,6 +172,7 @@ export default {
     border: 1px solid $color-text-l;
     color: $color-text-l;
     border-radius: 100px;
+    // font-size: 0;解决inline元素间的空白间隙
     font-size: 0;
 
     .icon-play {

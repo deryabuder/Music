@@ -33,6 +33,7 @@ export default {
     handlePlaylist (playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.singer.style.bottom = bottom
+      // 手动刷新scroll
       this.$refs.list.refresh()
     },
     selectSinger (singer) {
@@ -40,7 +41,7 @@ export default {
       this.$router.push({
         path: `/singer/${singer.id}`
       })
-      // 执行了mutations中的函数
+      // 子组件中点击，然后将事件传递给父组件，父组件完成跳转，并将歌手信息写入state，从而完成与二级路由歌手详情页的数据共享。
       this.setSinger(singer)
     },
     _getSingerList () {
@@ -94,10 +95,11 @@ export default {
           hot.push(val)
         }
       }
+      // ret的每个元素都是对象，包含title和 items 属性
       ret.sort((a, b) => {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
-      // 得到一个顺序排序的一维数组，数组中每个元素都是对象
+      // 得到一个顺序排序的一维数组，数组中每个元素都是对象，包含title和 items 属性
       return hot.concat(ret)
     },
     // 为写数据提供语法糖，调用

@@ -15,6 +15,7 @@ import { createSong } from 'common/js/song'
 export default {
   data () {
     return {
+      // 抓取的数据，没有用到 vuex
       songs: []
     }
   },
@@ -25,7 +26,7 @@ export default {
     bgImage () {
       return this.disc.imgurl
     },
-    // 从state中获取数据
+    // 父组件写入数据，子组件从state中获取数据
     ...mapGetters([
       'disc'
     ])
@@ -51,6 +52,7 @@ export default {
     _normalizeSongs (list) {
       let ret = []
       list.forEach((musicData) => {
+        // 只有歌曲包含这两项信息，才会成为指定格式的对象存放在this.songs中
         if (musicData.songid && musicData.albummid) {
           ret.push(createSong(musicData))
         }
@@ -71,6 +73,7 @@ export default {
 }
 
 .slide-enter, .slide-leave-to {
+  // 从右侧划出，然后回归右侧
   transform: translate3d(100%, 0, 0);
 }
 </style>

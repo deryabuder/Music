@@ -23,7 +23,7 @@
           <h1 class="title" v-html="currentSong.name"></h1>
           <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
-         <!-- 中部 -->
+         <!-- 中部，阻止默认事件-->
         <div class="middle"
              @touchstart.prevent="middleTouchStart"
              @touchmove.prevent="middleTouchMove"
@@ -36,13 +36,16 @@
                 <img class="image" :src="currentSong.image">
               </div>
             </div>
+            <!-- 当前歌词 -->
             <div class="playing-lyric-wrapper">
               <div class="playing-lyric">{{playingLyric}}</div>
             </div>
           </div>
+          <!-- 歌词显示页面 -->
           <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
             <div class="lyric-wrapper">
               <div v-if="currentLyric">
+                <!-- 每句歌词都被放在p标签中 -->
                 <p ref="lyricLine"
                    class="text"
                    :class="{'current': currentLineNum ===index}"
@@ -64,12 +67,13 @@
             <div class="progress-bar-wrapper">
               <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
             </div>
+            <!-- 歌曲的总时间 -->
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
            <!-- 底部操作区 -->
           <div class="operators">
-            <div class="icon i-left" @click="changeMode">
-              <i :class="iconMode"></i>
+            <div class="icon i-left">
+              <i :class="iconMode" @click="changeMode"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i @click="prev" class="icon-prev"></i>
@@ -104,6 +108,7 @@
             <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
           </progress-circle>
         </div>
+        <!-- 是否打开播放列表 -->
         <div class="control" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
@@ -120,12 +125,16 @@
 <script type="text/ecmascript-6">
 // 从vuex取数据到组件中
 import { mapGetters, mapMutations, mapActions } from 'vuex'
+// 使用JavaScript在浏览器中动态生成CSS关键帧动画
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
+// 进度条
 import ProgressBar from 'base/progress-bar/progress-bar'
+// 带有进度的播放按钮
 import ProgressCircle from 'base/progress-circle/progress-circle'
 import { playMode } from 'common/js/config'
 import { shuffle } from 'common/js/util'
+// 歌词解析插件
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
 import PlayList from 'components/playlist/playlist'
@@ -151,17 +160,20 @@ export default {
     cdCls () {
       return this.playing ? 'play' : 'play pause'
     },
+    // 播放器播放暂停图标的切换
     playIcon () {
       return this.playing ? 'icon-pause' : 'icon-play'
     },
+    // 最小化播放器的播放暂停图标切换
     miniIcon () {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
     },
-    // 改变图标的样式
+    // 改变最小化播放器播放模式的图标样式
     iconMode () {
       // 比较的是数字
       return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
     },
+    // 当歌曲没有就绪时，将上一首 下一首 切换播放状态按钮设置为无效
     disableCls () {
       return this.songReady ? '' : 'disable'
     },
@@ -187,12 +199,15 @@ export default {
     this.touch = {}
   },
   methods: {
+    // 点击返回键，切换为最小化播放器模式
     back () {
       this.setFullScreen(false)
     },
+    // 点击最小化播放器则切换全屏播放模式
     open () {
       this.setFullScreen(true)
     },
+    // 进入全屏模式的转换
     enter (el, done) {
       const { x, y, scale } = this._getPosAndScale()
       // 圆唱片从左下角移动到正常位置，先变大，然后边小
@@ -209,6 +224,7 @@ export default {
           transform: `translate3d(0, 0, 0) scale(1)`
         }
       }
+      // 注册动画
       animations.registerAnimation({
         name: 'move',
         animation,
@@ -217,13 +233,15 @@ export default {
           easing: 'linear'
         }
       })
-
+      // 运行动画
       animations.runAnimation(this.$refs.cdWrapper, 'move', done)
     },
+    // 移除动画
     afterEnter () {
       animations.unregisterAnimation('move')
       this.$refs.cdWrapper.style.animation = ''
     },
+    // 离开全屏模式
     leave (el, done) {
       this.$refs.cdWrapper.style.transition = 'all 0.4s'
       // 解构赋值
@@ -231,10 +249,12 @@ export default {
       this.$refs.cdWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`
       this.$refs.cdWrapper.addEventListener('transitionend', done)
     },
+    // 离开全屏模式后，移除动画
     afterLeave () {
       this.$refs.cdWrapper.style.transition = ''
       this.$refs.cdWrapper.style[transform] = ''
     },
+    // 切换播放状态
     togglePlaying () {
       if (!this.songReady) {
         return
@@ -310,14 +330,17 @@ export default {
       // 歌曲加载失败时
       this.songReady = true
     },
+    // timeupdate 事件在音频/视频（audio/video）的播放位置发生改变时触发
+    // 获取当前播放时间
     updateTime (e) {
       this.currentTime = e.target.currentTime
     },
+    // 重新设置播放时间和歌曲总时长
     format (interval) {
       // 向下取整
       interval = interval | 0
       const minute = interval / 60 | 0
-      const second = this._pad(interval % 60)
+      const second = this._pad(interval % 60) // 在秒前补零，保证是两位数
       return `${minute}:${second}`
     },
     // 拖动进度条时，改变当前播放时间和歌词的位置
@@ -364,6 +387,7 @@ export default {
           return
         }
         // 对得到的 lyric 进行解析
+        // let lyric = new Lyric(lyricStr, handler) 回调函数，歌词发生改变的调用，可以获取当前歌词及所在并，并执行滚动操作。
         this.currentLyric = new Lyric(lyric, this.handleLyric)
         if (this.playing) {
           this.currentLyric.play()
@@ -375,12 +399,16 @@ export default {
         this.currentLineNum = 0
       })
     },
+    // 参数为歌词总的行数lineNum和当前播放歌词txt
     handleLyric ({ lineNum, txt }) {
       this.currentLineNum = lineNum
+      // 大于5行，才需要滚动，为了让当前元素位于中间位置
       if (lineNum > 5) {
         let lineEl = this.$refs.lyricLine[lineNum - 5]
+        // 1s的动画时间
         this.$refs.lyricList.scrollToElement(lineEl, 1000)
       } else {
+        // 5行之内，直接滚动到顶部
         this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
       // 在cd页面展示当前播放的歌词
@@ -498,6 +526,7 @@ export default {
       if (!newSong.id === oldSong.id) {
         return
       }
+      // 当前歌曲发生变化时，歌词停止播放，当用户不再切换歌曲时，延时播放歌曲并获取歌词。
       if (this.currentLyric) {
         this.currentLyric.stop()
         this.currentTime = 0
@@ -514,6 +543,7 @@ export default {
         this.getLyric() // 异步
       }, 1000)
     },
+    // 监听playing的变化，实现播放或暂停
     playing (newPlaying) {
       const audio = this.$refs.audio
       this.$nextTick(() => {
@@ -570,6 +600,7 @@ export default {
           padding: 9px;
           font-size: $font-size-large-x;
           color: $color-theme;
+          // 逆时针旋转90度
           transform: rotate(-90deg);
         }
       }
@@ -597,6 +628,7 @@ export default {
       width: 100%;
       top: 80px;
       bottom: 170px;
+      // 空白符合并，换行符失效
       white-space: nowrap;
       font-size: 0;
 

@@ -1,11 +1,15 @@
 <template>
   <div class="music-list">
+    <!-- 返回按钮 -->
     <div class="back" @click="back">
       <i class="icon-back"></i>
     </div>
+    <!-- 标题 -->
     <h1 class="title" v-html="title"></h1>
+    <!-- 背景图区域 -->
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="play-wrapper">
+        <!-- 随机播放按钮 -->
         <div class="play" ref="playBtn" v-show="songs.length>0" @click='random'>
           <i class="icon-play"></i>
           <span class="text">随机播放全部</span>
@@ -14,6 +18,7 @@
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
+    <!-- 滚动区域 -->
     <scroll :data="songs" @scroll="scroll"
             :listen-scroll="listenScroll" :probe-type="probeType" class="list" ref="list">
       <div class="song-list-wrapper">
@@ -65,21 +70,33 @@ export default {
     }
   },
   computed: {
+    // 将style属性绑定这个变量
     bgStyle () {
       return `background-image:url(${this.bgImage})`
     }
   },
+  // 实例创建完成
   created () {
     this.probeType = 3
     this.listenScroll = true
   },
+  // 挂载完成
   mounted () {
     this.imageHeight = this.$refs.bgImage.clientHeight
-    // 最高滚动位置
+    // 最高滚动位置 负值
     this.minTransalteY = -this.imageHeight + RESERVED_HEIGHT
+    // 可滚动区域距离顶部的初始高度是图片的高度
     this.$refs.list.$el.style.top = `${this.imageHeight}px`
   },
   methods: {
+    back () {
+      this.$router.back()
+    },
+    random () {
+      this.randomPlay({
+        list: this.songs
+      })
+    },
     handlePlaylist (playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.list.$el.style.bottom = bottom
@@ -89,18 +106,10 @@ export default {
       // 是负值
       this.scrollY = pos.y
     },
-    back () {
-      this.$router.back()
-    },
     selectItem (item, index) {
       this.selectPlay({
         list: this.songs,
         index
-      })
-    },
-    random () {
-      this.randomPlay({
-        list: this.songs
       })
     },
     // 语法糖， 调用actions中的selectPlay函数
@@ -118,25 +127,32 @@ export default {
       let blur = 0
       const percent = Math.abs(newVal / this.imageHeight)
       if (newVal > 0) {
+        // 下拉扩大
         scale = 1 + percent
         zIndex = 10
       } else {
+        // 上拉模糊
         blur = Math.min(20, percent * 20)
       }
       // backdrop-filter这个属性只有iso支持
       this.$refs.layer.style[transform] = `translate3d(0,${translateY}px,0)`
       this.$refs.filter.style[backdrop] = `blur(${blur}px)`
       if (newVal < this.minTransalteY) {
+        // 上拉超过顶部界限
         zIndex = 10
         this.$refs.bgImage.style.paddingTop = 0
+        // 固定高度
         this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
         this.$refs.playBtn.style.display = 'none'
       } else {
+        // 图像尺寸变大，撑开的高度也会变大
         this.$refs.bgImage.style.paddingTop = '70%'
         this.$refs.bgImage.style.height = 0
+        // 播放按钮继续显示
         this.$refs.playBtn.style.display = ''
       }
       this.$refs.bgImage.style[transform] = `scale(${scale})`
+      // 下拉和超过顶部高度的时候显示图片
       this.$refs.bgImage.style.zIndex = zIndex
     }
   },
@@ -161,6 +177,7 @@ export default {
   right: 0;
   background: $color-background;
 
+  // position的值为absolute、fixed的元素脱离文档流
   .back {
     position: absolute;
     top: 0;
@@ -169,20 +186,23 @@ export default {
 
     .icon-back {
       display: block;
+      // 空白处需要背景色，元素与内容的间隔
       padding: 10px;
-      font-size: $font-size-large-x;
+      font-size: $font-size-large-x;  // 22px
       color: $color-theme;
     }
   }
-
+  // 没有包裹，无需设置 padding
   .title {
     position: absolute;
     top: 0;
-    left: 10%;
     z-index: 40;
+    // 达到居中的效果
+    left: 10%;
     width: 80%;
     np-wrap();
     text-align: center;
+    // 通过设置行高达到文字垂直居中的效果
     line-height: 40px;
     font-size: $font-size-large;
     color: $color-text;
@@ -208,7 +228,9 @@ export default {
         box-sizing: border-box;
         width: 135px;
         padding: 7px 0;
+        // 自身水平居中
         margin: 0 auto;
+        // 包裹的元素水平居中
         text-align: center;
         border: 1px solid $color-theme;
         border-radius: 100px;
@@ -218,7 +240,7 @@ export default {
           display: inline-block;
           vertical-align: middle;
           margin-right: 6px;
-          font-size: $font-size-medium-x;
+          font-size: $font-size-medium-x; // 16px
         }
 
         .text {
@@ -246,7 +268,7 @@ export default {
 
   .list {
     position: fixed;
-    top: 0px;
+    top: 0;
     bottom: 0;
     width: 100%;
     background: $color-background;
@@ -254,7 +276,7 @@ export default {
     .song-list-wrapper {
       padding: 20px 30px;
     }
-
+    // 在list中居中显示
     .loading-container {
       position: absolute;
       width: 100%;

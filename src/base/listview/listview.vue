@@ -1,5 +1,6 @@
 <template>
 <scroll class='listview' :data='data' ref='listview' :listenScroll='listenScroll' @scroll='scroll' :probeType='probeTybe'>
+  <!-- 歌手列表 -->
   <ul>
     <li v-for='group in data' class="list-group" :key='group.title' ref='listGroup'>
       <h2 class='list-group-title'>{{group.title}}</h2>
@@ -11,6 +12,7 @@
       </ul>
     </li>
   </ul>
+  <!-- 右侧索引列表 -->
   <div class='list-shortcut' @touchstart='onShortcutTouchStart' @touchmove.stop='onShortcutTouchMove' >
     <ul>
       <li v-for='(item, index) in shortCutList'
@@ -20,9 +22,11 @@
       :data-index='index'>{{item}}</li>
     </ul>
   </div>
+  <!-- 固定在上方的标题 -->
   <div class='list-fixed' v-show='fixedTitle' ref='fixed'>
     <h1 class='fixed-title'>{{fixedTitle}}</h1>
   </div>
+  <!-- 加载页 -->
   <div v-show='!data.length' class='loading-container'>
     <loading></loading>
   </div>
@@ -47,17 +51,18 @@ export default {
     this.listHeight = []
     this.probeTybe = 3
   },
-  props: {
-    data: {
-      type: Array,
-      default: () => []
-    }
-  },
   data () {
     return {
       scrollY: -1,
       currentIndex: 0,
       diff: -1
+    }
+  },
+  props: {
+    // 从父组件接收的歌手数据
+    data: {
+      type: Array,
+      default: () => []
     }
   },
   computed: {
@@ -75,36 +80,37 @@ export default {
     }
   },
   methods: {
+    scroll (pos) {
+      // 实时获取better-scroll滚动的y轴的距离
+      this.scrollY = pos.y
+    },
     // 将点击事件和所点击的元素派发给父元素 singer.vue
     selectItem (item) {
       this.$emit('select', item)
     },
     onShortcutTouchStart (e) {
-      // 获取点击元素的index值
+      // 获取自定义属性data-index的属性值
       let anchorIndex = getData(e.target, 'index')
-      // 手指/鼠标接触的位置
+      // touches：表示当前跟踪的触摸操作的 Touch 对象的数组。
       let firstTouch = e.touches[0]
+      // 页面坐标通过事件对象的 pageX 和 pageY 属性, pageY触点相对于文档上边沿的y坐标
       this.touch.y1 = firstTouch.pageY
       this.touch.anchorIndex = anchorIndex
       this._scrollTo(anchorIndex)
     },
     onShortcutTouchMove (e) {
-      // touches：表示当前跟踪的触摸操作的 Touch 对象的数组。
       let firstTouch = e.touches[0]
-      // 页面坐标通过事件对象的 pageX 和 pageY 属性
       this.touch.y2 = firstTouch.pageY
-      // delta偏移的锚点， | 0 向下取整
+      // delta偏移的锚点， | 0 向下取整,去除小数部分
       let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0
+      // 移动之后的 anchorIndex
       let anchorIndex = parseInt(this.touch.anchorIndex) + delta
       this._scrollTo(anchorIndex)
     },
     refresh () {
       this.$refs.listview.refresh()
     },
-    scroll (pos) {
-      // 实时获取better-scroll滚动的y轴的距离
-      this.scrollY = pos.y
-    },
+    // 响应对导航栏的点击和滑动
     _scrollTo (index) {
       /**
       *  vm.$refs 一个对象，持有已注册过 ref 的所有子组件（或HTML元素）
@@ -150,7 +156,7 @@ export default {
         let height2 = listHeight[i + 1]
         if (-newY >= height1 && -newY < height2) {
           this.currentIndex = i
-          // 相加，即可得到下一个title到固定的 title之间的距离
+          // 相加，即可得到下一个title到固定的 title高度之差
           this.diff = height2 + newY
           return
         }
@@ -159,7 +165,7 @@ export default {
       // listHeight
       this.currentIndex = listHeight.length - 2
     },
-    // 监听diff的变化
+    // 监听下一个title到固定的 title高度之差， 如果顶部与固定title接触的话，固定title会上移
     diff (newVal) {
       let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
       // 减少dom操作
@@ -189,6 +195,7 @@ export default {
   background: $color-background;
 
   .list-group {
+    // 元素与内容之间的间隔
     padding-bottom: 30px;
 
     .list-group-title {
@@ -201,6 +208,7 @@ export default {
     }
 
     .list-group-item {
+      // 歌手头像和歌手信息左右弹性布局
       display: flex;
       align-items: center;
       padding: 20px 0 0 30px;
@@ -212,6 +220,7 @@ export default {
       }
 
       .name {
+        // 元素与元素之间的间隔
         margin-left: 20px;
         color: $color-text-l;
         font-size: $font-size-medium;
@@ -226,6 +235,7 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     width: 20px;
+    // 元素和内容区域的间隔，需要背景色
     padding: 20px 0;
     border-radius: 10px;
     text-align: center;
@@ -233,6 +243,7 @@ export default {
     font-family: Helvetica;
 
     .item {
+      // 让内容和包裹元素有呼吸的距离
       padding: 3px;
       line-height: 1;
       color: $color-text-l;

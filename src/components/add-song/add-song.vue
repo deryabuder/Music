@@ -24,7 +24,7 @@
               </song-list>
             </div>
           </scroll>
-          <!-- 搜索历史 -->
+          <!-- 搜索历史，点击搜索历史，将搜索框内容重置为点击的内容-->
           <scroll :refreshDelay="refreshDelay" ref="searchList" v-if="currentIndex===1" class="list-scroll"
                   :data="searchHistory">
             <div class="list-inner">
@@ -33,7 +33,7 @@
           </scroll>
         </div>
       </div>
-      <!--搜索结果-->
+      <!--搜索结果，点击之后，子组件会添加歌曲到播放列表，父组件搜索内容保存在搜索历史-->
       <div class="search-result" v-show="query">
         <suggest :query="query" :showSinger="showSinger" @select="selectSuggest" @listScroll="blurInput"></suggest>
       </div>
@@ -63,6 +63,7 @@ export default {
   mixins: [searchMixin],
   data () {
     return {
+      // 默认不展示添加歌曲页面
       showFlag: false,
       showSinger: false,
       currentIndex: 0,
@@ -84,10 +85,11 @@ export default {
     ])
   },
   methods: {
-    // 展示添加歌曲页面
+    // 展示添加歌曲页面，给父组件使用
     show () {
       this.showFlag = true
       setTimeout(() => {
+        // 因为是v-if控制切换，因此需要刷新scroll
         if (this.currentIndex === 0) {
           this.$refs.songList.refresh()
         } else {
@@ -95,9 +97,11 @@ export default {
         }
       }, 20)
     },
+    // 点击按钮，隐藏当前页面
     hide () {
       this.showFlag = false
     },
+    // 点击最近播放，插入歌曲到顺序列表和随机列表
     selectSong (song, index) {
       if (index !== 0) {
         // 从搜索历史中添加歌曲
@@ -105,10 +109,12 @@ export default {
         this.$refs.topTip.show()
       }
     },
+    // 点击搜索建议，保存到搜索历史中
     selectSuggest () {
       this.$refs.topTip.show()
       this.saveSearch()
     },
+    // 子组件发了点击事件，父组件切换显示的当前内容
     switchItem (index) {
       this.currentIndex = index
     },
@@ -206,6 +212,7 @@ export default {
   .tip-title {
     text-align: center;
     padding: 18px 0;
+    // 清除内联元素之间的间隙
     font-size: 0;
 
     .icon-ok {
